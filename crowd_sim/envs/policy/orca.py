@@ -123,7 +123,7 @@ class ORCA(Policy):
         self.sim.setAgentPrefVelocity(0, tuple(pref_vel))
         for i, human_state in enumerate(state.human_states):
             # unknown goal position of other humans
-            self.sim.setAgentPrefVelocity(i + 1, (0, 0))
+            self.sim.setAgentPrefVelocity(i + 1, human_state.velocity)
 
         self.sim.doStep()
         action = ActionXY(*self.sim.getAgentVelocity(0))

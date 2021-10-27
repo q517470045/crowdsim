@@ -52,9 +52,7 @@ class CrowdSim(gym.Env):
         self.config = config
         self.time_limit = config.getint('env', 'time_limit')
         self.time_step = config.getfloat('env', 'time_step')
-        '随机化属性'
         self.randomize_attributes = config.getboolean('env', 'randomize_attributes')
-
         self.success_reward = config.getfloat('reward', 'success_reward')
         self.collision_penalty = config.getfloat('reward', 'collision_penalty')
         self.discomfort_dist = config.getfloat('reward', 'discomfort_dist')
@@ -83,7 +81,6 @@ class CrowdSim(gym.Env):
     def set_robot(self, robot):
         self.robot = robot
 
-    '随机行人位置'
     def generate_random_human_position(self, human_num, rule):
         """
         Generate human position according to certain rule
@@ -155,7 +152,6 @@ class CrowdSim(gym.Env):
         else:
             raise ValueError("Rule doesn't exist")
 
-    '生成圆形布局行人'
     def generate_circle_crossing_human(self):
         human = Human(self.config, 'humans')
         if self.randomize_attributes:
@@ -179,7 +175,6 @@ class CrowdSim(gym.Env):
         human.set(px, py, -px, -py, 0, 0, 0)
         return human
 
-    '生成方形布局行人'
     def generate_square_crossing_human(self):
         human = Human(self.config, 'humans')
         if self.randomize_attributes:
@@ -210,7 +205,7 @@ class CrowdSim(gym.Env):
                 break
         human.set(px, py, gx, gy, 0, 0, 0)
         return human
-    '行人到达目标总时长'
+
     def get_human_times(self):
         """
         Run the whole simulation to the end and compute the average time for human to reach goal.
@@ -263,21 +258,16 @@ class CrowdSim(gym.Env):
         assert phase in ['train', 'val', 'test']
         if test_case is not None:
             self.case_counter[phase] = test_case
-
-        '初始化行人数组''[0]*代表几维零向量'
         self.global_time = 0
         if phase == 'test':
             self.human_times = [0] * self.human_num
         else:
             self.human_times = [0] * (self.human_num if self.robot.policy.multiagent_training else 1)
-
-        '只有一个agent'
         if not self.robot.policy.multiagent_training:
             self.train_val_sim = 'circle_crossing'
 
         if self.config.get('humans', 'policy') == 'trajnet':
             raise NotImplementedError
-
         else:
             counter_offset = {'train': self.case_capacity['val'] + self.case_capacity['test'],
                               'val': 0, 'test': self.case_capacity['val']}
@@ -432,7 +422,7 @@ class CrowdSim(gym.Env):
     def render(self, mode='human', output_file=None):
         from matplotlib import animation
         import matplotlib.pyplot as plt
-        plt.rcParams['animation.ffmpeg_path'] = '/usr/local/ffmpeg'
+        plt.rcParams['animation.ffmpeg_path'] = '/usr/local/ffmpeg/bin/ffmpeg'
 
         x_offset = 0.11
         y_offset = 0.11
@@ -618,10 +608,3 @@ class CrowdSim(gym.Env):
                 plt.show()
         else:
             raise NotImplementedError
-
-env = gym.make('CrowdSim-v0')
-env.
-# test.generate_random_human_position(10, 'square_crossing')
-# x, y = test.humans[0].get_position()
-# print(x)
-# print(y)
